@@ -64,4 +64,16 @@ class Model_Face:
         you might have to preprocess the output. This function is where you can do that.
         '''
 
-        raise NotImplementedError
+        print(outputs.shape)
+        dets = outputs[0][0]
+        processed_out = [[]]
+
+        n, c, h, w = self.input_shape
+
+        for x in dets:
+            y = list(x)
+            if(y[2] > self.threshold):
+                processed_out[0].append(y)
+                break
+
+        return(processed_out, w, h)

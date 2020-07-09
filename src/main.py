@@ -27,12 +27,29 @@ def vid_inp(args):
     for x in inp_feed.next_batch():
 
         up_output = face_det.predict(x)
+        p_output, w, h = face_det.preprocess_output(up_output)
 
-        for y in up_output:
-            print(y)
+        if(p_output == [[]]):
+            cv.putText(x, "No Face Present", (0, 20),
+                       cv.FONT_HERSHEY_COMPLEX, 0.6, (0, 125, 255), 1)
+        else:
+            cv.putText(x, "At least one Face Present", (0, 20),
+                       cv.FONT_HERSHEY_COMPLEX, 0.6, (0, 125, 255), 1)
+        if(p_output == [[]]):
+            print('No Face')
+        else:
+            print(p_output[0][0], w, h)
+            print(x.shape)
+            fw = x.shape[1]
+            fh = x.shape[0]
+            xmin = int(p_output[0][0][3] * fw)
+            ymin = int(p_output[0][0][4] * fh)
+            xmax = int(p_output[0][0][5] * fw)
+            ymax = int(p_output[0][0][6] * fh)
+            cx = x[ymin:(ymax + 1), xmin:(xmax + 1)]
+            # cv.rectangle(x, (xmin, ymin), (xmax, ymax), (0, 0, 255), 3)
 
-        exit(0)
-        cv.imshow('Window', x)
+        cv.imshow('Window', cx)
         cv.waitKey(30)
 
     inp_feed.close()

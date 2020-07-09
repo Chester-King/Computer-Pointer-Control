@@ -14,6 +14,7 @@ class InputFeeder:
             self.cap = cv2.VideoCapture(self.input_file)
         elif self.input_type == 'cam':
             self.cap = cv2.VideoCapture(0)
+
         else:
             self.cap = cv2.imread(self.input_file)
 
@@ -21,6 +22,9 @@ class InputFeeder:
         while True:
             for _ in range(10):
                 _, frame = self.cap.read()
+            print(type(frame))
+            # print(frame)
+            # exit(0)
             yield frame
 
     def close(self):
