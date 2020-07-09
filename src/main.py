@@ -9,6 +9,7 @@ import numpy as np
 from input_feeder import InputFeeder
 from face_detection import Model_Face
 from facial_landmarks_detection import Model_Land
+from head_pose_estimation import Model_Head
 
 
 def vid_inp(args):
@@ -28,6 +29,10 @@ def vid_inp(args):
     l_model = "D:/Work/IntelNanodegreeIoT/Computer_Pointer_Control/Operations/models/landmarks-regression-retail-0009/landmarks-regression-retail-0009"
     land_det = Model_Land(l_model)
     land_det.load_model()
+
+    h_model = "D:/Work/IntelNanodegreeIoT/Computer_Pointer_Control/Operations/models/head-pose-estimation-adas-0001/head-pose-estimation-adas-0001"
+    head_det = Model_Head(h_model)
+    head_det.load_model()
 
     for x in inp_feed.next_batch():
 
@@ -60,17 +65,49 @@ def vid_inp(args):
             '''
 
             up_l_output = land_det.predict(cx)
-            x0 = up_l_output[0][0][0][0]
-            y0 = up_l_output[0][1][0][0]
-            x1 = up_l_output[0][2][0][0]
-            y1 = up_l_output[0][3][0][0]
-            x2 = up_l_output[0][4][0][0]
-            y2 = up_l_output[0][5][0][0]
-            x3 = up_l_output[0][6][0][0]
-            y3 = up_l_output[0][7][0][0]
-            x4 = up_l_output[0][8][0][0]
-            y4 = up_l_output[0][9][0][0]
+
+            fwc = cx.shape[1]
+            fhc = cx.shape[0]
+
+            x0 = int(up_l_output[0][0][0][0]*fwc)
+            y0 = int(up_l_output[0][1][0][0]*fhc)
+            x1 = int(up_l_output[0][2][0][0]*fwc)
+            y1 = int(up_l_output[0][3][0][0]*fhc)
+            x2 = int(up_l_output[0][4][0][0]*fwc)
+            y2 = int(up_l_output[0][5][0][0]*fhc)
+            x3 = int(up_l_output[0][6][0][0]*fwc)
+            y3 = int(up_l_output[0][7][0][0]*fhc)
+            x4 = int(up_l_output[0][8][0][0]*fwc)
+            y4 = int(up_l_output[0][9][0][0]*fhc)
             print((x0, y0), (x1, y1), (x2, y2), (x3, y3), (x4, y4))
+            # cv.circle(cx, (x0, y0), 5, (46, 164, 79), -1)
+            # cv.circle(cx, (x1, y1), 5, (46, 164, 79), -1)
+
+            cv.rectangle(cx, (x0-25, y0-25), (x0+25, y0+25), (0, 255, 0), 3)
+            cv.rectangle(cx, (x1-25, y1-25), (x1+25, y1+25), (0, 255, 0), 3)
+
+            left_eye = cx[y0-25:y0+25, x0-25:y0-25]
+            right_eye = cx[y1-25:y1+25, x1-25:y1-25]
+
+            '''
+            
+            
+            cv.circle(cx, (x2, y2), 5, (46, 164, 79), -1)
+            cv.circle(cx, (x3, y3), 5, (46, 164, 79), -1)
+            cv.circle(cx, (x4, y4), 5, (46, 164, 79), -1)
+
+            '''
+
+            '''
+            
+            Recieved Landmark. Moving on to Head Pose detection
+            
+            '''
+
+            yaw, pitch, roll = head_det.predict(cx)
+
+            print('Head Pose Angle : ', 'Yaw =', yaw[0][0],
+                  'Pitch =', pitch[0][0], 'Roll =', roll[0][0])
 
         cv.imshow('Window', cx)
         cv.waitKey(30)
