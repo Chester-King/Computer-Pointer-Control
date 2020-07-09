@@ -30,21 +30,21 @@ class Model_Face:
         self.input_shape = self.model.inputs[self.input_name].shape
         self.output_name = next(iter(self.model.outputs))
         self.output_shape = self.model.outputs[self.output_name].shape
-        print('Succesful execute')
+        print('Succesful execute - Face Detection')
 
     def load_model(self):
         # Loading Up plugin and network
         self.plugin = IECore()
         self.net_plugin = self.plugin.load_network(
             network=self.model, device_name=self.device, num_requests=1)
-        print('Hello_load')
+        print('Model Loaded - Face Detection')
 
     def predict(self, image):
         infer_request_handle = self.net_plugin.start_async(
             request_id=0, inputs={self.input_name: self.preprocess_input(image)})
         if(infer_request_handle.wait() == 0):
             net_output = infer_request_handle.outputs[self.output_name]
-        print('Hello_predict')
+        print('Prediction Sucessful  - Face Detection')
         return(net_output)
 
     def check_model(self):
@@ -55,7 +55,7 @@ class Model_Face:
         im_frame = cv2.resize(image, (w, h))
         im_frame = im_frame.transpose((2, 0, 1))
         im_frame = im_frame.reshape((n, c, h, w))
-        print('Succesful preprocessing')
+        print('Succesful preprocessing  - Face Detection')
         return(im_frame)
 
     def preprocess_output(self, outputs):
@@ -75,5 +75,5 @@ class Model_Face:
             if(y[2] > self.threshold):
                 processed_out[0].append(y)
                 break
-
+        print('Output Processed  - Face Detection')
         return(processed_out, w, h)

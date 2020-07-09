@@ -8,6 +8,7 @@ from argparse import ArgumentParser
 import numpy as np
 from input_feeder import InputFeeder
 from face_detection import Model_Face
+from facial_landmarks_detection import Model_Land
 
 
 def vid_inp(args):
@@ -24,6 +25,10 @@ def vid_inp(args):
     face_det = Model_Face(f_model)
     face_det.load_model()
 
+    l_model = "D:/Work/IntelNanodegreeIoT/Computer_Pointer_Control/Operations/models/landmarks-regression-retail-0009/landmarks-regression-retail-0009"
+    land_det = Model_Land(l_model)
+    land_det.load_model()
+
     for x in inp_feed.next_batch():
 
         up_output = face_det.predict(x)
@@ -38,7 +43,7 @@ def vid_inp(args):
         if(p_output == [[]]):
             print('No Face')
         else:
-            print(p_output[0][0], w, h)
+            # print(p_output[0][0], w, h)
             print(x.shape)
             fw = x.shape[1]
             fh = x.shape[0]
@@ -47,7 +52,25 @@ def vid_inp(args):
             xmax = int(p_output[0][0][5] * fw)
             ymax = int(p_output[0][0][6] * fh)
             cx = x[ymin:(ymax + 1), xmin:(xmax + 1)]
-            # cv.rectangle(x, (xmin, ymin), (xmax, ymax), (0, 0, 255), 3)
+
+            '''
+            
+            Face Cropped. Moving on to Landmark detection
+            
+            '''
+
+            up_l_output = land_det.predict(cx)
+            x0 = up_l_output[0][0][0][0]
+            y0 = up_l_output[0][1][0][0]
+            x1 = up_l_output[0][2][0][0]
+            y1 = up_l_output[0][3][0][0]
+            x2 = up_l_output[0][4][0][0]
+            y2 = up_l_output[0][5][0][0]
+            x3 = up_l_output[0][6][0][0]
+            y3 = up_l_output[0][7][0][0]
+            x4 = up_l_output[0][8][0][0]
+            y4 = up_l_output[0][9][0][0]
+            print((x0, y0), (x1, y1), (x2, y2), (x3, y3), (x4, y4))
 
         cv.imshow('Window', cx)
         cv.waitKey(30)
