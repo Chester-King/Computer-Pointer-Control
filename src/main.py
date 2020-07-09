@@ -10,6 +10,7 @@ from input_feeder import InputFeeder
 from face_detection import Model_Face
 from facial_landmarks_detection import Model_Land
 from head_pose_estimation import Model_Head
+from gaze_estimation import Model_Gaze
 
 
 def vid_inp(args):
@@ -33,6 +34,10 @@ def vid_inp(args):
     h_model = "D:/Work/IntelNanodegreeIoT/Computer_Pointer_Control/Operations/models/head-pose-estimation-adas-0001/head-pose-estimation-adas-0001"
     head_det = Model_Head(h_model)
     head_det.load_model()
+
+    g_model = "D:/Work/IntelNanodegreeIoT/Computer_Pointer_Control/Operations/models/gaze-estimation-adas-0002/gaze-estimation-adas-0002"
+    gaze_det = Model_Gaze(g_model)
+    gaze_det.load_model()
 
     for x in inp_feed.next_batch():
 
@@ -86,8 +91,8 @@ def vid_inp(args):
             cv.rectangle(cx, (x0-25, y0-25), (x0+25, y0+25), (0, 255, 0), 3)
             cv.rectangle(cx, (x1-25, y1-25), (x1+25, y1+25), (0, 255, 0), 3)
 
-            left_eye = cx[y0-25:y0+25, x0-25:y0-25]
-            right_eye = cx[y1-25:y1+25, x1-25:y1-25]
+            left_eye = cx[y0-25:y0+25, x0-25:x0+25]
+            right_eye = cx[y1-25:y1+25, x1-25:x1+25]
 
             '''
             
@@ -108,6 +113,19 @@ def vid_inp(args):
 
             print('Head Pose Angle : ', 'Yaw =', yaw[0][0],
                   'Pitch =', pitch[0][0], 'Roll =', roll[0][0])
+
+            '''
+            
+            Recieved Angle. Moving on to Gaze detection
+            
+            '''
+            left_eye_image = gaze_det.preprocess_input(left_eye)
+            print("Left Eye Complete")
+            right_eye_image = gaze_det.preprocess_input(right_eye)
+            print("Right Eye Complete")
+            head_pose_angles = [yaw[0][0], pitch[0][0], roll[0][0]]
+            print(gaze_det.predict(left_eye_image,
+                                   right_eye_image, head_pose_angles))
 
         cv.imshow('Window', cx)
         cv.waitKey(30)
