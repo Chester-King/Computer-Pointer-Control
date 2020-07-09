@@ -91,8 +91,8 @@ def vid_inp(args):
             cv.rectangle(cx, (x0-25, y0-25), (x0+25, y0+25), (0, 255, 0), 3)
             cv.rectangle(cx, (x1-25, y1-25), (x1+25, y1+25), (0, 255, 0), 3)
 
-            left_eye = cx[y0-25:y0+25, x0-25:x0+25]
-            right_eye = cx[y1-25:y1+25, x1-25:x1+25]
+            left_eye = cx[y0-30:y0+30, x0-30:x0+30]
+            right_eye = cx[y1-30:y1+30, x1-30:x1+30]
 
             '''
             
@@ -119,13 +119,19 @@ def vid_inp(args):
             Recieved Angle. Moving on to Gaze detection
             
             '''
-            left_eye_image = gaze_det.preprocess_input(left_eye)
-            print("Left Eye Complete")
-            right_eye_image = gaze_det.preprocess_input(right_eye)
-            print("Right Eye Complete")
-            head_pose_angles = [yaw[0][0], pitch[0][0], roll[0][0]]
-            print(gaze_det.predict(left_eye_image,
-                                   right_eye_image, head_pose_angles))
+
+            try:
+
+                left_eye_image = gaze_det.preprocess_input(left_eye)
+                print("Left Eye Complete")
+                right_eye_image = gaze_det.preprocess_input(right_eye)
+                print("Right Eye Complete")
+                head_pose_angles = [yaw[0][0], pitch[0][0], roll[0][0]]
+                print(gaze_det.predict(left_eye_image,
+                                       right_eye_image, head_pose_angles))
+
+            except:
+                print("Come closer to the camera... difficuly in prediction")
 
         cv.imshow('Window', cx)
         cv.waitKey(30)
