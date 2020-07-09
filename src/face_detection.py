@@ -30,6 +30,7 @@ class Model_Face:
         self.input_shape = self.model.inputs[self.input_name].shape
         self.output_name = next(iter(self.model.outputs))
         self.output_shape = self.model.outputs[self.output_name].shape
+        print('Succesful execute')
 
     def load_model(self):
         # Loading Up plugin and network
@@ -44,16 +45,17 @@ class Model_Face:
         if(infer_request_handle.wait() == 0):
             net_output = infer_request_handle.outputs[self.output_name]
         print('Hello_predict')
-        return(net_output, image)
+        return(net_output)
 
     def check_model(self):
         raise NotImplementedError
 
     def preprocess_input(self, image):
         n, c, h, w = self.input_shape
-        im_frame = cv2.resize(image, (w, h), interpolation=cv2.INTER_AREA)
+        im_frame = cv2.resize(image, (w, h))
         im_frame = im_frame.transpose((2, 0, 1))
         im_frame = im_frame.reshape((n, c, h, w))
+        print('Succesful preprocessing')
         return(im_frame)
 
     def preprocess_output(self, outputs):
@@ -61,4 +63,5 @@ class Model_Face:
         Before feeding the output of this model to the next model,
         you might have to preprocess the output. This function is where you can do that.
         '''
+
         raise NotImplementedError

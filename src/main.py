@@ -7,6 +7,7 @@ import cv2 as cv
 from argparse import ArgumentParser
 import numpy as np
 from input_feeder import InputFeeder
+from face_detection import Model_Face
 
 
 def vid_inp(args):
@@ -19,8 +20,18 @@ def vid_inp(args):
 
     inp_feed.load_data()
 
+    f_model = "D:/Work/IntelNanodegreeIoT/Computer_Pointer_Control/Operations/models/face-detection-adas-binary-0001/face-detection-adas-binary-0001"
+    face_det = Model_Face(f_model)
+    face_det.load_model()
+
     for x in inp_feed.next_batch():
-        print(x)
+
+        up_output = face_det.predict(x)
+
+        for y in up_output:
+            print(y)
+
+        exit(0)
         cv.imshow('Window', x)
         cv.waitKey(30)
 
