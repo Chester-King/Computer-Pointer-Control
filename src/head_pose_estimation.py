@@ -59,10 +59,3 @@ class Model_Head:
         im_frame = im_frame.reshape((n, c, h, w))
         print('Succesful preprocessing - Head Pose Detection')
         return(im_frame)
-
-    def preprocess_output(self, outputs):
-        '''
-        Before feeding the output of this model to the next model,
-        you might have to preprocess the output. This function is where you can do that.
-        '''
-        raise NotImplementedError

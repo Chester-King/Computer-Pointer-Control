@@ -125,16 +125,6 @@ def vid_inp(args):
             
             '''
 
-            # left_eye_image = gaze_det.preprocess_input(left_eye)
-            # print("Left Eye Complete")
-            # right_eye_image = gaze_det.preprocess_input(right_eye)
-            # print("Right Eye Complete")
-            # head_pose_angles = [yaw[0][0], pitch[0][0], roll[0][0]]
-            # gaze_vector = gaze_det.predict(
-            #     left_eye_image, right_eye_image, head_pose_angles)
-            # print("Gaze Vector :", gaze_vector[0])
-            # m_control.move(gaze_vector[0], gaze_vector[1])
-
             try:
 
                 left_eye_image = gaze_det.preprocess_input(left_eye)
